@@ -72,7 +72,7 @@ class CPTExample extends CustomPostType
 	 *
 	 * @var string
 	 */
-	protected $menu_title 'Ex. Class';
+	protected $menu_title = 'Ex. Class';
 
 
 	/** var $defaults
