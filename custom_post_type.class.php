@@ -848,19 +848,21 @@ if ( ! function_exists('custom_post_type') && class_exists('CustomPostType') && 
  * @param void
  * @return void
  */
-function include_cpt_files( ) {
-	// open the current dir
-	$dh = opendir(dirname(__FILE__));
+if ( ! function_exists('include_cpt_files')) { 
+	function include_cpt_files( ) {
+		// open the current dir
+		$dh = opendir(dirname(__FILE__));
 
-	$filelist = array( );
-	while (false !== ($file = readdir($dh))) {
-		if (preg_match('/^cpt\..*\.?php$/i', $file)) { // scanning for cpt.__.php files only
-			// if we found one of those files, include it, the rest happens by magic
-			include $file;
+		$filelist = array( );
+		while (false !== ($file = readdir($dh))) {
+			if (preg_match('/^cpt\..*\.?php$/i', $file)) { // scanning for cpt.__.php files only
+				// if we found one of those files, include it, the rest happens by magic
+				include $file;
+			}
 		}
-	}
 
-	closedir($dh);
+		closedir($dh);
+	}
 }
 include_cpt_files( );
 
