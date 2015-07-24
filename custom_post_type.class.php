@@ -112,6 +112,19 @@ class CustomPostType
 	protected $plural;
 
 
+	/** var $singular_menu_title
+	 *
+	 *		this is the string used for the menu item
+	 *
+	 *		if this variable is missing/empty, it will be
+	 *		set to the same value as $singular
+	 *		if that form is incorrect, set the proper form here
+	 *
+	 * @var string
+	 */
+	protected $singular_menu_title;
+
+
 	/** var $menu_title
 	 *
 	 *		this is the string used for the menu item
@@ -149,13 +162,16 @@ class CustomPostType
 	 * @var array
 	 */
 	protected $defaults = array(
-		'labels' => array( ), // this can be overridden by setting it, but if it's empty, defaults will be used
-		'description' => '',
+#		'labels' => array( ), // this can be overridden by setting it, but if it's empty, defaults will be used
+#		'description' => '',
 		'public' => true,
-		'publicly_queryable' => true,
 		'exclude_from_search' => false,
+		'publicly_queryable' => true,
 		'show_ui' => true,
-		'menu_position' => 5,
+		'show_in_nav_menus' => true,
+		'show_in_menu' => true,
+		'show_in_admin_bar' => true,
+		'menu_position' => 20,
 		'menu_icon' => null,
 		'capability_type' => 'page',
 #		'capabilities' => array( ),
@@ -171,24 +187,25 @@ class CustomPostType
 #			'comments',
 			'revisions',
 			'page-attributes',
+#			'post-formats',
 		),
+#		'register_meta_box_cb' => callback function that registers the admin meta boxes
 		'taxonomies' => array(
 			'category',
 		),
 		'has_archive' => true,
+#		'permalink_epmask' => EP_PERMALINK,
 		'rewrite' => true, /** array(
 			'slug' => 'slug', // '/slug/[post_slug]/'
 			'with_front' => true, // if your permalink structure is /blog/, then your links will be: false->/news/, true->/blog/news/
 			'feeds' => true,
 			'pages' => true,
+			'ep_mask' => EP_PERMALINK,
 		), //*/
 		'query_var' => true,
 		'can_export' => true,
-		'show_in_nav_menus' => true,
-#		'labels' => array(
-#			-- see labels below in set_defaults( ) method --
-#		),
-#		'register_meta_box_cb' => callback function that registers the admin meta boxes
+
+# These are here for informational purposes, they can be overridden, but are not needed for CPTs themselves
 #		'save_data' => callback function that saves the data
 #		'edit_columns' => callback function tells WP what info to display on the admin index page
 #		'sort_columns' => callback function tells WP which field to use when that column's sort buttons are clicked
@@ -202,7 +219,7 @@ class CustomPostType
 	 *		this is where the class gets all setup and run
 	 *
 	 * @param string optional post type name
-	 * @param array optional defaults
+	 * @param array optional args
 	 * @param string optional post slug
 	 * @return CPT class object
 	 */
@@ -261,11 +278,15 @@ class CustomPostType
 
 		$this->singular = ( ! empty($this->singular)) ? $this->singular : $post_type;
 		$this->plural = ( ! empty($this->plural)) ? $this->plural : $post_slug;
+		$this->singular_menu_title = ( ! empty($this->singular_menu_title)) ? $this->singular_menu_title : $this->singular;
 		$this->menu_title = ( ! empty($this->menu_title)) ? $this->menu_title : $this->plural;
 
 		$this->defaults['labels'] = ! empty($this->defaults['labels']) ? $this->defaults['labels'] : array(
 			'name' => _x($this->plural, 'post type general name'), // Posts
 			'singular_name' => _x($this->singular, 'post type singular name'), // Post
+			'menu_name' => _x($this->menu_title, 'post type menu name'), // Posts (in menu)
+			'name_admin_bar' => _x($this->singular, 'post type singular name'), // Post (in dropdown menu)
+			'all_items' => __('All '.$this->menu_title), // All Posts (in menu)
 			'add_new' => _x('Add New', strtolower($post_slug)), // Add New
 			'add_new_item' => __('Add New '.$this->singular), // Add New Post
 			'edit_item' => __('Edit '.$this->singular), // Edit Post
@@ -275,7 +296,6 @@ class CustomPostType
 			'not_found' =>  __('No '.$this->plural.' found'), // No Posts found
 			'not_found_in_trash' => __('No '.$this->plural.' found in Trash'), // No Posts found in Trash
 			'parent_item_colon' => ':', // Parent Page: (hierarchical only)
-			'menu_name' => _x($this->menu_title, 'post type menu name'), // Posts (in menu)
 		);
 
 		$this->defaults['has_archive'] = (true == $this->defaults['has_archive']) ? $this->post_slug : $this->defaults['has_archive'];

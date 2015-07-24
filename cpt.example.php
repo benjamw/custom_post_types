@@ -442,5 +442,6 @@ class CPTExample extends CustomPostType
 
 } // end of CPTExample class
 
+// this instantiates the class and registers the CPT in WP
 custom_post_type('CPTExample');
 
